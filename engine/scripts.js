@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   const tableBody = document.querySelector('#pantoneTable tbody');
   const searchInput = document.getElementById('search');
+  const sortByNameButton = document.querySelectorAll('button')[0];
+  const sortByCodeButton = document.querySelectorAll('button')[1];
 
   async function loadPantoneData() {
     try {
@@ -11,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const text = await response.text();
       return text.split('\n').filter(line => line.trim() !== '');
     } catch (error) {
-      console.error('Error loading:', error);
+      console.error('Error loading file:', error);
       return [];
     }
   }
@@ -32,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.copyToClipboard = function (text) {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Copied to portapapeles');
+      alert('Code copied to clipboard!');
     });
   };
 
@@ -62,12 +64,12 @@ document.addEventListener('DOMContentLoaded', function () {
     filterTable(data);
   });
 
-  document.querySelectorAll('button')[0].addEventListener('click', async () => {
+  sortByNameButton.addEventListener('click', async () => {
     const data = await loadPantoneData();
     sortTable(data);
   });
 
-  document.querySelectorAll('button')[1].addEventListener('click', async () => {
+  sortByCodeButton.addEventListener('click', async () => {
     const data = await loadPantoneData();
     sortTable(data, true);
   });
