@@ -39,7 +39,8 @@ def find_closest_pantone_color(rgb, pantone_colors):
             closest_color = {
                 'name': pantone['name'],
                 'hex': pantone['hex'],
-                'code': code
+                'code': code,
+                'cmyk': pantone.get('cmyk', [0, 0, 0, 0])
             }
 
     return closest_color
@@ -58,7 +59,7 @@ def save_html(image_path, pantone_matches):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Color Picker</title>
+        <title>Color Analysis/title>
         <style>
             body {{
                 display: flex;
@@ -107,13 +108,16 @@ def save_html(image_path, pantone_matches):
             color_hex = match.get('hex', '000000')
             color_name = match.get('name', 'Unknown')
             color_code = match.get('code', 'N/A')
+            cmyk_values = match.get('cmyk', [0, 0, 0, 0])
+            cmyk_str = ', '.join(f'{value:.2f}' for value in cmyk_values)
             left = idx * 60
             top = 0
             html_content += f"""
                 <div class="color-box" style="background-color: #{color_hex}; left: {left}px; top: {top}px;">
                 </div>
                 <div class="color-info" style="left: {left}px; top: {top + 60}px;">
-                    Pantone: {color_name} (Code: {color_code})
+                    Pantone: {color_name} (Code: {color_code})<br>
+                    CMYK: {cmyk_str}
                 </div>
             """
 
@@ -150,7 +154,7 @@ def save_html(image_path, pantone_matches):
     print(f"Results saved to {output_file}")
 
 def process_image(image_path):
-    pantone_colors = load_pantone_colors('./pantone-colors/pantone-numbers.json')
+    pantone_colors = load_pantone_colors('./engine/pantone-html-cmyk.json')
     colors = extract_colors(image_path)
     pantone_matches = [find_closest_pantone_color(tuple(color), pantone_colors) for color in colors]
     save_html(image_path, pantone_matches)
@@ -159,6 +163,6 @@ if __name__ == "__main__":
     image_path = input("Image PATH?: ").strip()
 
     if not os.path.isfile(image_path):
-        print("Incorret PATH.")
+        print("Incorrect PATH.")
     else:
         process_image(image_path)
