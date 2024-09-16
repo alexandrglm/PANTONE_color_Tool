@@ -18,8 +18,9 @@ def generate_html(colors, output_path):
         file.write('    .search-bar input { padding: 10px; width: 50%; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px; }\n')
         file.write('    #htmlCodeDisplay { padding: 10px; width: 50%; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff; }\n')
         file.write('    .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; justify-items: center; }\n')
-        file.write('    .card { width: 200px; height: 300px; background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: flex-end; }\n')
-        file.write('    .color-block { height: 60%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; cursor: pointer; }\n')
+        file.write('    .card { width: 200px; height: 300px; background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 0 15px rgba(255,255,255,0.7) inset; display: flex; flex-direction: column; justify-content: flex-end; border-radius: 10px; position: relative; overflow: hidden; }\n')
+        file.write('    .color-block { height: 60%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 1; }\n')
+        file.write('    .color-block::after { content: \'\'; position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(to top, rgba(255,255,255,0.6), rgba(255,255,255,0)); z-index: -1; }\n')
         file.write('    .card-info { height: 40%; padding: 10px; text-align: center; background-color: #fff; border-top: 1px solid #ddd; }\n')
         file.write('    .pantone-family { font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #000; }\n')
         file.write('    .pantone-name { font-size: 14px; margin: 5px 0; color: #555; }\n')
@@ -43,7 +44,7 @@ def generate_html(colors, output_path):
         file.write('    </div>\n')
         file.write('    <div>\n')
         file.write('      <button onclick="saveAsPNG()">Save as PNG</button>\n')
-        file.write('      <button onclick="resetSelection()">Reset charset</button>\n')
+        file.write('      <button onclick="resetSelection()">Reset selection</button>\n')
         file.write('    </div>\n')
         file.write('  </header>\n')
 
@@ -97,7 +98,6 @@ def generate_html(colors, output_path):
         file.write('    });\n')
 
         file.write('    if (!hexExists) {\n')
-        file.write('     \n')
         file.write('      var added = false;\n')
         file.write('      selectedColors.forEach(function(box) {\n')
         file.write('        if (!box.getAttribute("data-hex") && !added) {\n')
@@ -114,22 +114,21 @@ def generate_html(colors, output_path):
         file.write('});\n')
 
         file.write('function saveAsPNG() {\n')
-        file.write('  html2canvas(document.body).then(function(canvas) {\n')
+        file.write('  html2canvas(document.querySelector(".grid-container")).then(function(canvas) {\n')
         file.write('    var link = document.createElement("a");\n')
-        file.write('    link.href = canvas.toDataURL("image/png");\n')
-        file.write('    link.download = "pantone_colors.png";\n')
+        file.write('    link.download = "pantone_cards.png";\n')
+        file.write('    link.href = canvas.toDataURL();\n')
         file.write('    link.click();\n')
         file.write('  });\n')
         file.write('}\n')
 
         file.write('function resetSelection() {\n')
-        file.write('  var selectedColors = document.querySelectorAll(".selected-color-box");\n')
-        file.write('  selectedColors.forEach(function(box) {\n')
-        file.write('    box.style.backgroundColor = "white";\n')
+        file.write('  document.querySelectorAll(".selected-color-box").forEach(function(box) {\n')
+        file.write('    box.style.backgroundColor = "#fff";\n')
         file.write('    box.setAttribute("data-hex", "");\n')
         file.write('    box.innerHTML = "";\n')
         file.write('  });\n')
-        file.write('  document.getElementById("htmlCodeDisplay").value = "Click to copy code ...";\n')
+        file.write('  document.getElementById("htmlCodeDisplay").value = "";\n')
         file.write('}\n')
 
         file.write('</script>\n')
@@ -137,6 +136,6 @@ def generate_html(colors, output_path):
         file.write('</html>\n')
 
 if __name__ == "__main__":
-    with open('./pantone-colors/pantone-numbers.json') as f:
-        data = json.load(f)
-    generate_html(data, './PANTONE_Card_Tool.html')
+    with open('./pantone-colors/pantone-numbers.json', 'r') as f:
+        colors = json.load(f)
+    generate_html(colors, './PANTONE_Card_Tool.html')
