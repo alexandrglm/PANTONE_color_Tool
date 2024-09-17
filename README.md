@@ -1,6 +1,10 @@
-### PANTONE to HTML Colour Tool
+### the PANTONE Machine
+![Pantone_Machine_Logo](https://github.com/user-attachments/assets/bff1c551-65b8-4dc1-9c95-e6cd1529853a)
 
 ## USAGE
+
+https://github.com/user-attachments/assets/7bb42aba-881f-4daa-ab0e-1f9716e34a8e
+
 ```
 $ python list.py
 $ python create.py
